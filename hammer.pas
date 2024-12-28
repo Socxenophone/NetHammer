@@ -1,3 +1,9 @@
+{ 
+Pnet Hammer © 
+by @Socxenophone
+Version: 1.0.0
+}
+
 program LoadTester;
 
 {$APPTYPE CONSOLE}
