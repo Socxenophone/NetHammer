@@ -54,10 +54,7 @@ Run:
 ```bash
 ./loadtester [options]
 ```  
-
----
-
-### CLI Options  
+#### CLI Options  
 - **`--url` or `-u`**: Target URL (required).  
   Example: `--url=https://example.com`  
 
