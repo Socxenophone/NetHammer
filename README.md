@@ -29,40 +29,24 @@ Pnet comes with advanced features for **real-time metrics**, concurrent requests
 
 ## Usage
 
-### CLI Flags
-
-- **`--url` or `-u`**: The target URL for testing.
-  - Example: `--url=https://example.com`
-- **`--bots` or `-b`**: The number of concurrent bots for the attack.
-  - Example: `--bots=100`
-- **`--timeout` or `-t`**: Timeout for each request in milliseconds (optional).
-  - Example: `--timeout=10000`
-- **`--version` or `-v`**: Prints the version and exits.
-  - Example: `--version`
-- **`--help` or `-h`**: Prints a usage message with descriptions of each flag.
-  - Example: `--help`
-
-### Command Examples
-
-1. Run with URL and bots specified:
+Run with URL and bots specified:
    ```bash
    ./hammer --url=https://example.com --bots=100
    ```
 
-2. Include a timeout for each request:
+Include a timeout for each request:
    ```bash
    ./hammer --url=https://example.com --bots=50 --timeout=5000
    ```
 
-3. Print version information:
+Print version information:
    ```bash
    ./hammer --version
    ```
-
-4. Display help message:
+For detailed usage see the  help message:
    ```bash
    ./hammer --help
-   ```
+   ``` 
 
 ## Real-Time Metrics
 
