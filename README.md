@@ -5,114 +5,104 @@ Pnet comes with advanced features for **real-time metrics**, traffic simulation,
 
 *Work in progress : Expect breaking changes*
 
----
+## Features
 
-### Features  
-1. **Real-Time Metrics**: See live stats during execution, including:  
-   - Total requests sent  
-   - Errors encountered  
-   - Average latency  
+- **Concurrency**: Sends requests simultaneously to increase load-testing capability.
+- **Request Customization**: Choose HTTP methods (GET, POST, PUT, DELETE), customize headers, and send data in request bodies.
+- **Rate Limiting**: Control the number of requests sent per second to simulate real-world traffic.
+- **Response Time Analysis**: Record and display average, minimum, and maximum response times.
+- **IP Rotation (Proxies)**: Simulate requests from different IPs using proxy servers.
+- **Result Visualization**: Provide visual metrics like a histogram of response times.
+- **Timeouts and Retries**: Set request timeouts and implement retry logic for failed requests.
+- **Support for HTTPS**: Ensure requests work with both HTTP and HTTPS.
+- **Stress Test Simulation**: Simulate various scenarios like increasing traffic over time (ramp-up testing) and sustained high traffic (stress testing).
+- **User-Agent Rotation**: Randomize `User-Agent` headers to mimic requests from various devices and browsers.
+- **Interactive Mode**: Run tests interactively or in automated batch mode.
+- **Multi-Protocol Support**: Expanded support for HTTP/HTTPS, WebSocket, FTP, and MQTT.
 
-2. **Data Collection**: Save results in JSON format for post-analysis, including response codes and latencies.  
+## Installation
 
-3. **Traffic Simulation Profiles**: Choose from predefined traffic patterns:  
-   - Spikes: Sudden bursts of requests.  
-   - Waves: Gradual increases and decreases in traffic.  
-   - Sustained: Constant high load.  
+1. **Compile the Program**: Ensure you have a Pascal compiler installed (e.g., Free Pascal).
+2. **Compile the Source Code**:
+   ```bash
+   fpc loadtester.pas
+   ```
 
-4. **Multi-Protocol Support**: Test beyond HTTP/HTTPS with added support for:  
-   - WebSocket  
-   - FTP  
-   - MQTT  
+## Usage
 
-5. **Concurrency**: Run high numbers of simultaneous requests for load testing.  
+### CLI Flags
 
-6. **Request Customization**: Modify headers, payloads, and methods (GET, POST, etc.).  
+- **`--url` or `-u`**: The target URL for testing.
+  - Example: `--url=https://example.com`
+- **`--bots` or `-b`**: The number of concurrent bots for the attack.
+  - Example: `--bots=100`
+- **`--timeout` or `-t`**: Timeout for each request in milliseconds (optional).
+  - Example: `--timeout=10000`
+- **`--version` or `-v`**: Prints the version and exits.
+  - Example: `--version`
+- **`--help` or `-h`**: Prints a usage message with descriptions of each flag.
+  - Example: `--help`
 
-7. **SSL/TLS and HTTPS Support**: Securely test websites with full HTTPS support.  
+### Command Examples
 
-8. **Rate Limiting**: Control the rate of requests per second for more realistic tests.  
+1. Run with URL and bots specified:
+   ```bash
+   ./loadtester --url=https://example.com --bots=100
+   ```
 
-9. **User-Agent Rotation**: Simulate diverse client devices with random user-agent strings.  
+2. Include a timeout for each request:
+   ```bash
+   ./hammer --url=https://example.com --bots=50 --timeout=5000
+   ```
 
----
+3. Print version information:
+   ```bash
+   ./hammer --version
+   ```
 
-### Requirements  
-- **Pascal Compiler**: Free Pascal recommended.  
-- **Libraries**:  
-  - Indy (TIdHTTP, TIdSSLIOHandlerSocketOpenSSL).  
-  - JSON handling libraries.  
+4. Display help message:
+   ```bash
+   ./hammer --help
+   ```
 
----
+## Real-Time Metrics
 
-### Usage  
+During execution, the program displays live stats:
+- Requests Sent
+- Successful Requests
+- Last Response Time
 
-Compile:  
+## Data Collection
+
+Results are saved to:
+- **`load_test.log`**: Logs errors and responses.
+- **`load_test_results.json`**: Contains response codes and latencies in JSON format.
+
+## Traffic Simulation Profiles
+
+The program supports predefined traffic patterns:
+- **Spike**: Simulates a spike in traffic.
+- **Wave**: Simulates waves of traffic.
+- **Sustained**: Simulates sustained high traffic.
+
+## Example Output
+
 ```bash
-fpc LoadTester.pas -o loadtester
-```  
+PNET HAMMER 
+ver 1.1.0
+Load Tester - DDOS Simulator for your own website
+Requests Sent: 10, Successful: 10, Last Response Time: 0.123 sec
+Requests Sent: 20, Successful: 20, Last Response Time: 0.110 sec
+...
+Test completed in 12.345 sec
+```
 
-Run:  
-```bash
-./loadtester [options]
-```  
-#### CLI Options  
-- **`--url` or `-u`**: Target URL (required).  
-  Example: `--url=https://example.com`  
+## Contributing
 
-- **`--bots` or `-b`**: Number of concurrent bots (default: 10).  
-  Example: `--bots=100`  
+Contributions are welcome! Please open an issue or submit a pull request if you have any improvements or bug fixes.
 
-- **`--timeout` or `-t`**: Request timeout in seconds (default: 5).  
-  Example: `--timeout=10`  
+## License
 
-- **`--rate-limit` or `-r`**: Limit requests per second (default: no limit).  
-  Example: `--rate-limit=50`  
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```
 
-- **`--profile` or `-p`**: Select traffic profile (`spike`, `wave`, `sustained`).  
-  Example: `--profile=wave`  
-
-- **`--save` or `-s`**: Save results to a JSON file.  
-  Example: `--save=results.json`  
-
-- **`--protocol` or `-P`**: Specify protocol (`http`, `websocket`, `ftp`, `mqtt`).  
-  Example: `--protocol=websocket`  
-
-- **`--user-agent` or `-ua`**: Enable random user-agent rotation.  
-
-- **`--help` or `-h`**: Display usage instructions.  
-
----
-
-### Examples  
-#### Real-Time Metrics with HTTPS:  
-```bash
-./loadtester --url=https://example.com --bots=50 --timeout=10 --rate-limit=20 --user-agent
-```  
-
-#### Spiked Traffic Pattern:  
-```bash
-./loadtester --url=https://example.com --bots=100 --profile=spike --save=spike_results.json
-```  
-
-#### Multi-Protocol Test (WebSocket):  
-```bash
-./loadtester --url=wss://example.com/socket --protocol=websocket --bots=30
-```  
-
----
-
-### Notes  
-- **Real-Time Metrics**: Stats will be displayed live in the console during execution.  
-- **JSON Output**: Includes response codes, latencies, and errors for detailed analysis.  
-- **Responsible Use**: Always test websites you own or have explicit permission to test.  
-
----
-
-### Contributing  
-Contributions are welcome. If you have ideas for new features or bug fixes, submit an issue or pull request.  
-
----
-
-### License  
-This tool is open-source under the [MIT License](LICENSE).
