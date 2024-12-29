@@ -1,13 +1,12 @@
 ## Pnet Hammer LoadTester  
 ![](https://github.com/Socxenophone/PnetBarricade/blob/main/splash.png) 
 
-Pnet comes with advanced features for **real-time metrics**, traffic simulation, **user-agent rotation**, and **multi-protocol support**, including SSl/TLS , HTTPS, FTP, MQTT, etc. This tool simulates a modern Distributed Denial of Service (DDoS) scenario, for anyone looking to test their web infrastructure.  
+Pnet comes with advanced features for **real-time metrics**, concurrent requests, traffic simulation, **user-agent rotation**, and **multi-protocol support**, including SSl/TLS , HTTPS, FTP, MQTT, etc. This tool simulates a modern Distributed Denial of Service (DDoS) scenario, for anyone looking to test their web infrastructure.  
 
 *Work in progress : Expect breaking changes*
 
 ## Features
 
-- **Concurrency**: Sends requests simultaneously to increase load-testing capability.
 - **Request Customization**: Choose HTTP methods (GET, POST, PUT, DELETE), customize headers, and send data in request bodies.
 - **Rate Limiting**: Control the number of requests sent per second to simulate real-world traffic.
 - **Response Time Analysis**: Record and display average, minimum, and maximum response times.
@@ -25,7 +24,7 @@ Pnet comes with advanced features for **real-time metrics**, traffic simulation,
 1. **Compile the Program**: Ensure you have a Pascal compiler installed (e.g., Free Pascal).
 2. **Compile the Source Code**:
    ```bash
-   fpc loadtester.pas
+   fpc hammer.pas
    ```
 
 ## Usage
@@ -47,7 +46,7 @@ Pnet comes with advanced features for **real-time metrics**, traffic simulation,
 
 1. Run with URL and bots specified:
    ```bash
-   ./loadtester --url=https://example.com --bots=100
+   ./hammer --url=https://example.com --bots=100
    ```
 
 2. Include a timeout for each request:
