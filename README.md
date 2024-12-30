@@ -22,18 +22,16 @@ Pnet comes with advanced features for **real-time metrics**, concurrent requests
 
 ## Features
 
-- **Request Customization**: Choose HTTP methods (GET, POST, PUT, DELETE), customize headers, and send data in request bodies.
-- **Rate Limiting**: Control the number of requests sent per second to simulate real-world traffic.
-- **Response Time Analysis**: Record and display average, minimum, and maximum response times.
-- **IP Rotation (Proxies)**: Simulate requests from different IPs using proxy servers.
-- **Result Visualization**: Provide visual metrics like a histogram of response times.
-- **Timeouts and Retries**: Set request timeouts and implement retry logic for failed requests.
-- **Support for HTTPS**: Ensure requests work with both HTTP and HTTPS.
-- **Stress Test Simulation**: Simulate various scenarios like increasing traffic over time (ramp-up testing) and sustained high traffic (stress testing).
-- **User-Agent Rotation**: Randomize `User-Agent` headers to mimic requests from various devices and browsers.
-- **Interactive Mode**: Run tests interactively or in automated batch mode.
-- **Multi-Protocol Support**: Expanded support for HTTP/HTTPS, WebSocket, FTP, and MQTT.
-
+- Support for FTP,MQT, WebSocket, HTTP/S etc Multi-Protocol Support 
+- Request Customization
+- Rate Limiting
+- Response Time Analysis
+- IP Rotation (Proxies)
+- Result Visualization 
+- Stress Test Simulation
+- User-Agent Rotation 
+- Interactive Batch Mode
+  
 ## Installation
 
 1. **Compile the Program**: Ensure you have a Pascal compiler installed (e.g., Free Pascal).
