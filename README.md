@@ -6,7 +6,7 @@ Pnet comes with advanced features for **real-time metrics**, concurrent requests
 *Work in progress : Expect breaking changes*
 <!-- TOC start -->
 
-- [Pnet Hammer LoadTester  ](#pnet-hammer-loadtester)
+
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -22,7 +22,7 @@ Pnet comes with advanced features for **real-time metrics**, concurrent requests
 
 ## Features
 
-- Support for FTP,MQT, WebSocket, HTTP/S etc Multi-Protocol Support 
+- Support for FTP, MQT, WebSocket, HTTP/S, etc Multi-Protocol Support 
 - Request Customization
 - Rate Limiting
 - Response Time Analysis
