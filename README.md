@@ -95,6 +95,7 @@ Contributions are welcome! Please open an issue or submit a pull request if you 
 - [x] IP/User-Agent Rotation 
 - [x] Port scanning & fingerprinting 
 - [x] Multi Protocol Support
+- [ ] Custom Traffic Profiles 
 - [ ] Bot-net features 
 - [ ] GUI 
 
