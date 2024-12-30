@@ -3,6 +3,8 @@
 
 Pnet comes with advanced features for **real-time metrics**, concurrent requests, traffic simulation, **user-agent, ip rotation**, basic port scanning and fingerprinting, and **multi-protocol support**, including SSl/TLS , HTTPS, FTP, MQTT, etc. This tool simulates a modern Distributed Denial of Service (DDoS) scenario, for anyone looking to test their web infrastructure.  
 
+
+
 *Work in progress : Expect breaking changes*
 <!-- TOC start -->
 
@@ -92,11 +94,14 @@ Contributions are welcome! Please open an issue or submit a pull request if you 
 - [x] Request Customising + Concurrent requests 
 - [x] IP/User-Agent Rotation 
 - [x] Port scanning & fingerprinting 
-- [x] Multi Protocol Support 
+- [x] Multi Protocol Support
+- [ ] Bot-net features 
 - [ ] GUI 
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
+
+> **Disclaimer**  
+> This tool is intended for ethical and legal use only. The developer is not responsible for any misuse or unlawful activities conducted with this tool. Always ensure that your actions comply with the laws and regulations of your jurisdiction.
 
