@@ -4,6 +4,21 @@
 Pnet comes with advanced features for **real-time metrics**, concurrent requests, traffic simulation, **user-agent, ip rotation**, basic port scanning and fingerprinting, and **multi-protocol support**, including SSl/TLS , HTTPS, FTP, MQTT, etc. This tool simulates a modern Distributed Denial of Service (DDoS) scenario, for anyone looking to test their web infrastructure.  
 
 *Work in progress : Expect breaking changes*
+<!-- TOC start -->
+
+- [Pnet Hammer LoadTester  ](#pnet-hammer-loadtester)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [FAQ](#faq)
+   * [Real-Time Metrics](#real-time-metrics)
+   * [Data Collection](#data-collection)
+   * [Traffic Simulation Profiles](#traffic-simulation-profiles)
+- [Contributing](#contributing)
+- [Roadmap ](#roadmap)
+- [License](#license)
+
+<!-- TOC end -->
 
 ## Features
 
@@ -38,7 +53,6 @@ Include a timeout for each request:
    ```bash
    ./hammer --url=https://example.com --bots=50 --timeout=5000
    ```
-
 Print version information:
    ```bash
    ./hammer --version
@@ -46,43 +60,42 @@ Print version information:
 For detailed usage see the  help message:
    ```bash
    ./hammer --help
-   ``` 
+   ```
 
-## Real-Time Metrics
+## FAQ
+### Real-Time Metrics
 
 During execution, the program displays live stats:
 - Requests Sent
 - Successful Requests
 - Last Response Time
 
-## Data Collection
+### Data Collection
 
 Results are saved to:
 - **`load_test.log`**: Logs errors and responses.
 - **`load_test_results.json`**: Contains response codes and latencies in JSON format.
 
-## Traffic Simulation Profiles
+### Traffic Simulation Profiles
 
 The program supports predefined traffic patterns:
 - **Spike**: Simulates a spike in traffic.
 - **Wave**: Simulates waves of traffic.
 - **Sustained**: Simulates sustained high traffic.
 
-## Example Output
 
-```bash
-PNET HAMMER 
-ver 1.1.0
-Load Tester - DDOS Simulator for your own website
-Requests Sent: 10, Successful: 10, Last Response Time: 0.123 sec
-Requests Sent: 20, Successful: 20, Last Response Time: 0.110 sec
-...
-Test completed in 12.345 sec
-```
 
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request if you have any improvements or bug fixes.
+
+## Roadmap 
+- [x] Basic Implementation 
+- [x] Request Customising + Concurrent requests 
+- [x] IP/User-Agent Rotation 
+- [x] Port scanning & fingerprinting 
+- [x] Multi Protocol Support 
+- [ ] GUI 
 
 ## License
 
