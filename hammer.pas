@@ -10,16 +10,6 @@ uses
   IdIOHandlerBuffer, IdIOHandlerStream, IdIOHandlerMemory, IdIOHandlerFile, IdIOHandlerNamedPipe,
   IdIOHandlerSocketOpenSSL, IdIOHandlerSSLIOHandler, IdIOHandlerSSLIOHandlerSocket,
   IdIOHandlerSSLIOHandlerSocketOpenSSL, IdIOHandlerSSLIOHandlerSocketOpenSSLBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCL, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImpl, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSL, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImpl, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSL, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImpl, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSL, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImpl, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplSSL, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplSSLBase,
-  IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplSSLImpl, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplSSLImplBase,
   JSON, IdTCPClient;
 
 type
@@ -283,18 +273,18 @@ begin
   begin
     lock.Enter;
     try
-      currentRequests := totalRequests;
-      currentSuccessfulRequests := successfulRequests;
-      if Length(responseTimes) > 0 then
-        currentResponseTime := responseTimes[High(responseTimes)]
-      else
-        currentResponseTime := 0;
-    finally
-      lock.Leave;
-    end;
-    Writeln(Format('Requests Sent: %d, Successful: %d, Last Response Time: %.3f sec', [currentRequests, currentSuccessfulRequests, currentResponseTime]));
-    Sleep(1000); // Update every second
+        currentRequests := totalRequests;
+    currentSuccessfulRequests := successfulRequests;
+    if Length(responseTimes) > 0 then
+      currentResponseTime := responseTimes[High(responseTimes)]
+    else
+      currentResponseTime := 0;
+  finally
+    lock.Leave;
   end;
+  Writeln(Format('Requests Sent: %d, Successful: %d, Last Response Time: %.3f sec', [currentRequests, currentSuccessfulRequests, currentResponseTime]));
+  Sleep(1000); // Update every second
+end;
 end;
 
 procedure simulate_traffic_profile(profile: string; bots: Integer; const url, method: string; headers: TStringList; const data: string;
@@ -308,7 +298,7 @@ begin
         run_tests(bots, url, method, headers, data, timeout, retries, rateLimit, results);
         bots := bots div 10; // Reset bots to original
       end;
-        'wave':
+    'wave':
       begin
         // Simulate a wave of traffic
         for var i := 1 to 5 do
