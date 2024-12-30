@@ -20,7 +20,7 @@ uses
   IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImpl, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplBase,
   IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplSSL, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplSSLBase,
   IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplSSLImpl, IdIOHandlerSSLIOHandlerSocketOpenSSLVCLImplSSLImplSSLImplSSLImplSSLImplBase,
-  IdFTP, IdWebSocket, IdMQTT, JSON;
+  JSON, IdTCPClient;
 
 type
   TLoadTestThread = class(TThread)
@@ -61,6 +61,11 @@ var
   startTime, endTime: TDateTime;
   totalRequests, successfulRequests: Integer;
   resultsArray: TJSONArray;
+  portScan: Boolean;
+  fingerprint: Boolean;
+  target_ip: string;
+  start_port, end_port: Integer;
+  fingerprint_url: string;
 
 procedure TLoadTestThread.Execute;
 var
@@ -175,6 +180,8 @@ var
   i: Integer;
   param: string;
 begin
+  portScan := False;
+  fingerprint := False;
   for i := 1 to ParamCount do
   begin
     param := ParamStr(i);
@@ -186,35 +193,83 @@ begin
         bots := StrToIntDef(Copy(param, Pos('=', param) + 1, Length(param)), 0)
       else if param.StartsWith('--timeout=') or param.StartsWith('-t=') then
         timeout := StrToIntDef(Copy(param, Pos('=', param) + 1, Length(param)), 10000)
-      else if param = '--version' or param = '-v' then
+      else if param.StartsWith('--version') or param.StartsWith('-v') then
       begin
         Writeln(Format('ROSASINESUS v%d.%d.%d', [ver_major, ver_minor, patch]));
         Halt;
       end
-      else if param = '--help' or param = '-h' then
+      else if param.StartsWith('--help') or param.StartsWith('-h') then
       begin
         Writeln('Usage:');
         Writeln('  ./loadtester --url=<URL> --bots=<bots> [--timeout=<timeout>] [--version] [--help]');
+        Writeln('  ./loadtester --port-scan --target-ip=<IP> --start-port=<start> --end-port=<end>');
+        Writeln('  ./loadtester --fingerprint --fingerprint-url=<URL>');
         Writeln('Flags:');
         Writeln('  --url, -u: The target URL for testing.');
         Writeln('  --bots, -b: The number of concurrent bots for the attack.');
         Writeln('  --timeout, -t: Timeout for each request in milliseconds (optional, default is 10000 ms).');
         Writeln('  --version, -v: Prints the version and exits.');
         Writeln('  --help, -h: Prints this usage message.');
+        Writeln('  --port-scan, -p: Enable port scanning.');
+        Writeln('  --target-ip, -i: Target IP address for port scanning.');
+        Writeln('  --start-port, -s: Starting port for scanning.');
+        Writeln('  --end-port, -e: Ending port for scanning.');
+        Writeln('  --fingerprint, -f: Enable web server fingerprinting.');
+        Writeln('  --fingerprint-url, -u: URL for web server fingerprinting.');
         Halt;
-      end;
+      end
+      else if param.StartsWith('--port-scan') or param.StartsWith('-p') then
+        portScan := True
+      else if param.StartsWith('--target-ip=') or param.StartsWith('-i=') then
+        target_ip := Copy(param, Pos('=', param) + 1, Length(param))
+      else if param.StartsWith('--start-port=') or param.StartsWith('-s=') then
+        start_port := StrToIntDef(Copy(param, Pos('=', param) + 1, Length(param)), 1)
+      else if param.StartsWith('--end-port=') or param.StartsWith('-e=') then
+        end_port := StrToIntDef(Copy(param, Pos('=', param) + 1, Length(param)), 1024)
+      else if param.StartsWith('--fingerprint') or param.StartsWith('-f') then
+        fingerprint := True
+      else if param.StartsWith('--fingerprint-url=') or param.StartsWith('-u=') then
+        fingerprint_url := Copy(param, Pos('=', param) + 1, Length(param));
     end;
   end;
 
-  if url = '' then
+  if portScan and fingerprint then
   begin
-    Writeln('Error: --url is required.');
+    Writeln('Error: --port-scan and --fingerprint cannot be used together.');
     Halt;
   end;
 
-  if bots = 0 then
+  if portScan then
   begin
-    Writeln('Error: --bots is required.');
+    if target_ip = '' then
+    begin
+      Writeln('Error: --target-ip is required for port scanning.');
+      Halt;
+    end;
+    if start_port = 0 then
+    begin
+      Writeln('Error: --start-port is required for port scanning.');
+      Halt;
+    end;
+    if end_port = 0 then
+    begin
+      Writeln('Error: --end-port is required for port scanning.');
+      Halt;
+    end;
+  end;
+
+  if fingerprint then
+  begin
+    if fingerprint_url = '' then
+    begin
+      Writeln('Error: --fingerprint-url is required for web server fingerprinting.');
+      Halt;
+    end;
+  end;
+
+  if not portScan and not fingerprint and (url = '' or bots = 0) then
+  begin
+    Writeln('Error: --url and --bots are required for load testing.');
     Halt;
   end;
 end;
@@ -253,7 +308,7 @@ begin
         run_tests(bots, url, method, headers, data, timeout, retries, rateLimit, results);
         bots := bots div 10; // Reset bots to original
       end;
-    'wave':
+        'wave':
       begin
         // Simulate a wave of traffic
         for var i := 1 to 5 do
@@ -343,6 +398,69 @@ begin
   CloseFile(jsonFile);
 end;
 
+// Function to scan a single port
+procedure scan_port(target_ip: string; port: Integer);
+var
+  client: TIdTCPClient;
+  open: Boolean;
+begin
+  client := TIdTCPClient.Create(nil);
+  try
+    client.Host := target_ip;
+    client.Port := port;
+    client.ConnectTimeout := 1000; // 1 second timeout
+    try
+      client.Connect;
+      open := True;
+    except
+      on E: Exception do
+        open := False;
+    end;
+    if open then
+      Writeln(Format('Port %d is OPEN', [port]))
+    else
+      Writeln(Format('Port %d is CLOSED or FILTERED', [port]));
+  finally
+    client.Free;
+  end;
+end;
+
+// Function to scan a range of ports
+procedure scan_ports(target_ip: string; start_port, end_port: Integer);
+var
+  port: Integer;
+begin
+  for port := start_port to end_port do
+    scan_port(target_ip, port);
+end;
+
+// Function to fingerprint web server
+procedure fingerprint_web_server(url: string);
+var
+  http: TIdHTTP;
+  response: IIdHTTPResponse;
+  serverHeader: string;
+begin
+  http := TIdHTTP.Create(nil);
+  try
+    http.HandleRedirects := True;
+    http.IOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(http);
+    try
+      response := http.Head(url);
+      serverHeader := response.Server;
+      if serverHeader <> '' then
+        Writeln(Format('Web Server: %s', [serverHeader]))
+      else
+        Writeln('Web Server: Unknown');
+    except
+      on E: Exception do
+        Writeln(Format('Error fingerprinting web server: %s', [E.Message]));
+    end;
+  finally
+    http.Free;
+  end;
+end;
+
 begin
   ver_major := 1;
   ver_minor := 1;
@@ -364,24 +482,36 @@ begin
     retries := 3; // Default retries
     rateLimit := 1.0; // Default rate limit (1 request per second)
 
-    startTime := Now;
+    if portScan then
+    begin
+      Writeln(Format('Scanning %s from port %d to %d...', [target_ip, start_port, end_port]));
+      scan_ports(target_ip, start_port, end_port);
+    end
+    else if fingerprint then
+    begin
+      Writeln(Format('Fingerprinting web server at %s...', [fingerprint_url]));
+      fingerprint_web_server(fingerprint_url);
+    end
+    else
+    begin
+      startTime := Now;
 
-    resultsArray := TJSONArray.Create;
-    try
-      display_real_time_metrics;
-      simulate_traffic_profile('sustained', bots, url, method, headers, data, timeout, retries, rateLimit, resultsArray);
-      endTime := Now;
+      resultsArray := TJSONArray.Create;
+      try
+        display_real_time_metrics;
+        simulate_traffic_profile('sustained', bots, url, method, headers, data, timeout, retries, rateLimit, resultsArray);
+        endTime := Now;
 
-      log_results(resultsArray);
-    finally
-      resultsArray.Free;
+        log_results(resultsArray);
+      finally
+        resultsArray.Free;
+      end;
+
+      Writeln(Format('Test completed in %.3f sec', [MilliSecondsBetween(endTime, startTime) / MSecsPerSec]));
     end;
-
   finally
     headers.Free;
   end;
 
   CloseFile(logFile);
-  Writeln(Format('Test completed in %.3f sec', [MilliSecondsBetween(endTime, startTime) / MSecsPerSec]));
-end. 
-  
+end.
