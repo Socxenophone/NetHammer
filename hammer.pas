@@ -4,13 +4,7 @@ program LoadTester;
 
 uses
   SysUtils, Classes, IdHTTP, IdGlobal, IdSSLOpenSSL, IdException, SyncObjs, DateUtils, Math,
-  StrUtils, IdComponent, IdTCPConnection, IdTCPClient, IdBaseComponent, IdExceptionCore,
-  IdIntercept, IdInterceptBase, IdInterceptRetry, IdInterceptThrottle, IdIOHandler,
-  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdIOHandlerWriteBuffer, IdIOHandlerReadBuffer,
-  IdIOHandlerBuffer, IdIOHandlerStream, IdIOHandlerMemory, IdIOHandlerFile, IdIOHandlerNamedPipe,
-  IdIOHandlerSocketOpenSSL, IdIOHandlerSSLIOHandler, IdIOHandlerSSLIOHandlerSocket,
-  IdIOHandlerSSLIOHandlerSocketOpenSSL, IdIOHandlerSSLIOHandlerSocketOpenSSLBase,
-  JSON, IdTCPClient;
+  StrUtils, JSON;
 
 type
   TLoadTestThread = class(TThread)
@@ -205,7 +199,7 @@ begin
         Writeln('  --start-port, -s: Starting port for scanning.');
         Writeln('  --end-port, -e: Ending port for scanning.');
         Writeln('  --fingerprint, -f: Enable web server fingerprinting.');
-        Writeln('  --fingerprint-url, -u: URL for web server fingerprinting.');
+        Writeln('  --fingerprint-url, -fu: URL for web server fingerprinting.');
         Halt;
       end
       else if param.StartsWith('--port-scan') or param.StartsWith('-p') then
@@ -218,7 +212,7 @@ begin
         end_port := StrToIntDef(Copy(param, Pos('=', param) + 1, Length(param)), 1024)
       else if param.StartsWith('--fingerprint') or param.StartsWith('-f') then
         fingerprint := True
-      else if param.StartsWith('--fingerprint-url=') or param.StartsWith('-u=') then
+      else if param.StartsWith('--fingerprint-url=') or param.StartsWith('-fu=') then
         fingerprint_url := Copy(param, Pos('=', param) + 1, Length(param));
     end;
   end;
@@ -273,18 +267,18 @@ begin
   begin
     lock.Enter;
     try
-        currentRequests := totalRequests;
-    currentSuccessfulRequests := successfulRequests;
-    if Length(responseTimes) > 0 then
-      currentResponseTime := responseTimes[High(responseTimes)]
-    else
-      currentResponseTime := 0;
-  finally
-    lock.Leave;
+      currentRequests := totalRequests;
+      currentSuccessfulRequests := successfulRequests;
+      if Length(responseTimes) > 0 then
+        currentResponseTime := responseTimes[High(responseTimes)]
+      else
+        currentResponseTime := 0;
+    finally
+      lock.Leave;
+    end;
+    Writeln(Format('Requests Sent: %d, Successful: %d, Last Response Time: %.3f sec', [currentRequests, currentSuccessfulRequests, currentResponseTime]));
+    Sleep(1000); // Update every second
   end;
-  Writeln(Format('Requests Sent: %d, Successful: %d, Last Response Time: %.3f sec', [currentRequests, currentSuccessfulRequests, currentResponseTime]));
-  Sleep(1000); // Update every second
-end;
 end;
 
 procedure simulate_traffic_profile(profile: string; bots: Integer; const url, method: string; headers: TStringList; const data: string;
@@ -352,7 +346,7 @@ procedure log_results(results: TJSONArray);
 var
   totalResponseTime: Double;
   minResponseTime, maxResponseTime, avgResponseTime: Double;
-  jsonFile: TextFile;
+    jsonFile: TextFile;
   jsonStr: string;
 begin
   totalResponseTime := 0;
@@ -368,7 +362,10 @@ begin
       maxResponseTime := responseTime;
   end;
 
-  avgResponseTime := totalResponseTime / Length(responseTimes);
+  if Length(responseTimes) > 0 then
+    avgResponseTime := totalResponseTime / Length(responseTimes)
+  else
+    avgResponseTime := 0;
 
   Writeln(logFile, '------------------- Results -------------------');
   Writeln(logFile, Format('Total Requests: %d', [totalRequests]));
